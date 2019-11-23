@@ -1,0 +1,29 @@
+{
+  "name": "nodejs-mentoring-program-2019q4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "task1": "nodemon --exec babel-node src/index.js",
+    "task2": "nodemon --exec babel-node src/csvtojson.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EvgeniyKvasyuk/NodeJS-Mentoring-Program-2019Q4.git"
+  },
+  "author": "Evgenii Kvasiuk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EvgeniyKvasyuk/NodeJS-Mentoring-Program-2019Q4/issues"
+  },
+  "homepage": "https://github.com/EvgeniyKvasyuk/NodeJS-Mentoring-Program-2019Q4#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/node": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "csvtojson": "^2.0.10",
+    "nodemon": "^2.0.1"
+  }
+}
