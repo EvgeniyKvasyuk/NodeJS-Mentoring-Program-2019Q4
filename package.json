@@ -18,12 +18,18 @@
     "url": "https://github.com/EvgeniyKvasyuk/NodeJS-Mentoring-Program-2019Q4/issues"
   },
   "homepage": "https://github.com/EvgeniyKvasyuk/NodeJS-Mentoring-Program-2019Q4#readme",
+  "dependencies": {
+    "csvtojson": "^2.0.10",
+    "nodemon": "^2.0.1"
+  },
   "devDependencies": {
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.4",
     "@babel/node": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
-    "csvtojson": "^2.0.10",
-    "nodemon": "^2.0.1"
+    "babel-eslint": "^10.0.1",
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.18.2"
   }
 }
