@@ -43,23 +43,45 @@ const convertRegular = () => csv().fromFile(convertingFilePath)
 
 const callConvert = () => {
   if (process.argv[2] === 'stream') {
-    convertStream().then(() => console.log('Конвертация через Stream прошла'));
-  } else {
-    convertRegular().then(() => console.log('Конвертация прошла'));
+    return convertStream()
+      .then(() => {
+        console.log('Конвертация через Stream прошла');
+        return Promise.resolve();
+      })
+      .catch(() => {
+        console.log('Конвертация прошла');
+        return Promise.reject();
+      });
   }
+
+  return convertRegular()
+    .then(() => {
+      console.log('Конвертация прошла');
+      return Promise.resolve();
+    })
+    .catch(() => {
+      console.log('Конвертация прошла');
+      return Promise.reject();
+    });
+
 };
 
-const convert = () => {
+const convert = () => new Promise((resolve, reject) => {
   fs.stat(paths.txt, (err, stats) => {
     if (!stats) {
       fs.mkdir(paths.txt, { recursive: true }, () => {
-        callConvert();
+        return callConvert()
+          .then(() => resolve())
+          .catch(() => reject());
       });
     } else {
-      callConvert();
+      return callConvert()
+        .then(() => resolve())
+        .catch(() => reject());
     }
   });
+});
 
-};
-
-convert();
+convert()
+  .then(() => { console.log('Закончено'); })
+  .catch(() => { console.log('Что то пошло не так'); });
