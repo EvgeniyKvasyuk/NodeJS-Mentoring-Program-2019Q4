@@ -2,8 +2,13 @@
 import path from 'path';
 import csv from 'csvtojson';
 import fs from 'fs';
+import util from 'util';
 
 import { paths } from '../constants';
+
+const asyncStat = util.promisify(fs.stat);
+const asyncWrite = util.promisify(fs.writeFile);
+const asyncMkdir = util.promisify(fs.mkdir);
 
 const convertingFilePath = path.resolve(paths.csv, 'node_mentoring_t1_2_input_example.csv');
 const convertedFilePath = path.resolve(paths.txt, 'converted_result.txt');
@@ -29,14 +34,9 @@ const convertStream = () => new Promise((resolve, reject) => {
 const convertRegular = () => csv().fromFile(convertingFilePath)
   .then((json) => {
     const result = json.reduce((acc, current) => `${acc}${JSON.stringify(current)}\n`, '');
-    fs.writeFile(
+    return asyncWrite(
       convertedFilePath,
-      result,
-      (error) => {
-        if (error) {
-          console.log('Возникла ошибка при записи', error.toString());
-        }
-      }
+      result
     );
   })
   .catch(error => console.log(error.toString()));
@@ -49,7 +49,7 @@ const callConvert = () => {
         return Promise.resolve();
       })
       .catch(() => {
-        console.log('Конвертация прошла');
+        console.log('Конвертация не удалась');
         return Promise.reject();
       });
   }
@@ -60,27 +60,23 @@ const callConvert = () => {
       return Promise.resolve();
     })
     .catch(() => {
-      console.log('Конвертация прошла');
+      console.log('Конвертация не удалась');
       return Promise.reject();
     });
 
 };
 
-const convert = () => new Promise((resolve, reject) => {
-  fs.stat(paths.txt, (err, stats) => {
-    if (!stats) {
-      fs.mkdir(paths.txt, { recursive: true }, () => {
-        return callConvert()
-          .then(() => resolve())
-          .catch(() => reject());
-      });
-    } else {
-      return callConvert()
-        .then(() => resolve())
-        .catch(() => reject());
-    }
-  });
-});
+const convert = async () => {
+  try {
+    await asyncStat(paths.txt);
+  } catch {
+    await asyncMkdir(paths.txt, { recursive: true });
+  }
+
+  const convertResult = await callConvert();
+
+  return convertResult;
+};
 
 convert()
   .then(() => { console.log('Закончено'); })
