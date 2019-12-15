@@ -1,0 +1,47 @@
+{
+  "root": true,
+  "extends": [
+    "airbnb/base"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "plugins": [
+    "import"
+  ],
+  "parser": "babel-eslint",
+  "rules": {
+    "arrow-body-style": "off",
+    "class-methods-use-this": "off",
+    "comma-dangle": ["error", "only-multiline"],
+    "consistent-return": "off",
+    "curly": ["error", "all"],
+    "import/extensions": ["off", "always"],
+    "import/no-extraneous-dependencies": "off",
+    "import/no-unresolved": ["error", { "ignore": ["css/", "js/", "image/"] }],
+    "import/prefer-default-export": "off",
+    "jsx-a11y/href-no-hash": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "linebreak-style": "off",
+    "max-len": ["error", { "code": 120, "ignoreStrings": true, "ignoreTemplateLiterals": true }],
+    "newline-per-chained-call": "warn",
+    "no-alert": "warn",
+    "no-debugger": "warn",
+    "no-mixed-operators": "off",
+    "no-multiple-empty-lines": ["error", { "max": 1 }],
+    "no-param-reassign": "off",
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-unused-expressions": "off",
+    "no-unused-vars": "warn",
+    "padded-blocks": "off",
+    "prefer-template": "off",
+    "radix": ["error", "as-needed"],
+    "import/no-useless-path-segments": ["error", {"noUselessIndex": true}]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": { "paths": ["src/js"] }
+    }
+  }
+}
