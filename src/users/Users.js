@@ -32,7 +32,7 @@ class Users {
 
   delete(id) {
     if (this.users.has(id)) {
-      this.users.set(id, { ...this.users.get(id), idDeleted: true });
+      this.users.set(id, { ...this.users.get(id), isDeleted: true });
       return { success: true };
     }
     return { success: false, message: 'User not found' };
