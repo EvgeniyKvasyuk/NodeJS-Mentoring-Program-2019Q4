@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "task1": "nodemon --exec babel-node src/index.js",
-    "task2": "nodemon --exec babel-node src/csvtojson.js"
+    "task2": "nodemon --exec babel-node src/csvtojson.js",
+    "task3": "nodemon --exec babel-node src/server.js"
   },
   "repository": {
     "type": "git",
@@ -19,13 +20,19 @@
   },
   "homepage": "https://github.com/EvgeniyKvasyuk/NodeJS-Mentoring-Program-2019Q4#readme",
   "dependencies": {
+    "@hapi/joi": "^16.1.8",
     "csvtojson": "^2.0.10",
+    "express": "^4.17.1",
+    "express-joi-validation": "^4.0.3",
+    "lodash": "^4.17.15",
     "nodemon": "^2.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.4",
     "@babel/node": "^7.7.4",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.7.4",
+    "@babel/plugin-proposal-optional-chaining": "^7.7.5",
     "@babel/preset-env": "^7.7.4",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.5.1",
