@@ -1,5 +1,5 @@
 import { User } from './User';
-import { DEFAULT_LIMIT } from './constants';
+import { DEFAULT_LIMIT, ERROR_CODES } from './constants';
 
 class Users {
   constructor() {
@@ -11,7 +11,7 @@ class Users {
     const user = new User(userData);
 
     if (this.logins.has(userData.login)) {
-      return { success: false, message: 'Login exists' };
+      return { success: false, code: ERROR_CODES.BAD_DATA, message: 'Login exists' };
     }
 
     this.users.set(user.id, user);
@@ -22,12 +22,12 @@ class Users {
   update(id, userData) {
     if (this.users.has(id)) {
       if (this.logins.has(userData.login)) {
-        return { success: false, message: 'Login exists' };
+        return { success: false, code: ERROR_CODES.BAD_DATA, message: 'Login exists' };
       }
       this.users.set(id, { ...this.users.get(id), ...userData });
       return { success: true };
     }
-    return { success: false, message: 'User not found' };
+    return { success: false, code: ERROR_CODES.NOT_FOUND, message: 'User not found' };
   }
 
   delete(id) {
@@ -35,7 +35,7 @@ class Users {
       this.users.set(id, { ...this.users.get(id), isDeleted: true });
       return { success: true };
     }
-    return { success: false, message: 'User not found' };
+    return { success: false, code: ERROR_CODES.NOT_FOUND, message: 'User not found' };
   }
 
   getById(id) {
@@ -43,7 +43,7 @@ class Users {
       return { success: true, user: this.users.get(id) };
     }
 
-    return { success: false, message: 'User not found' };
+    return { success: false, code: ERROR_CODES.NOT_FOUND, message: 'User not found' };
   }
 
   getAutoSuggestUsers(partOfLogin, limit = DEFAULT_LIMIT) {
