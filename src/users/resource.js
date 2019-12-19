@@ -12,40 +12,42 @@ usersResource
     next();
   })
   .get('/', (req, res) => {
-    res.status(200);
-    res.json(req.query.substr
-      ? users.getAutoSuggestUsers(req.query.substr, req.query.limit)
+    res.status(200).json(req.query.partOfLogin
+      ? users.getAutoSuggestUsers(req.query.partOfLogin, req.query.limit)
       : users.get()
     );
   })
   .get('/:id', (req, res) => {
     const user = users.getById(req.params.id);
     if (user) {
-      res.status(200);
-      res.json(user);
+      res.status(200).json(user);
     } else {
-      res.status(404);
-      res.end();
+      res.status(404).end();
     }
   })
   .post('/', paramsValidator, (req, res) => {
-    users.add(req.body);
-    res.status(200);
-    res.end();
+    const result = users.add(req.body);
+    if (result.success) {
+      res.status(200).end();
+    } else {
+      res.status(400).json(result);
+    }
   })
   .put('/:id', paramsValidator, (req, res) => {
-    if (users.update(req.params.id, req.body)) {
-      res.status(200);
+    const result = users.update(req.params.id, req.body);
+    if (result.success) {
+      res.status(200).end();
     } else {
-      res.status(404);
+      res.status(400).json(result);
     }
-    res.end();
+
   })
   .delete('/:id', (req, res) => {
-    if (users.delete(req.params.id, req.body)) {
+    const result = users.delete(req.params.id, req.body);
+    if (result.success) {
       res.status(200);
     } else {
-      res.status(404);
+      res.status(400).json(result);
     }
     res.end();
   })

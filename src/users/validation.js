@@ -18,8 +18,9 @@ export const validationErrorHandler = (err, req, res, next) => {
       acc[current.path[0]] = current.message;
       return acc;
     }, {});
-    res.status(400);
-    res.json(message);
+    res
+      .status(400)
+      .json(message);
   }
   next(err);
 };

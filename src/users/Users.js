@@ -4,39 +4,47 @@ import { DEFAULT_LIMIT } from './constants';
 class Users {
   constructor() {
     this.users = new Map();
+    this.logins = new Set();
   }
 
   add(userData) {
     const user = new User(userData);
 
+    if (this.logins.has(userData.login)) {
+      return { success: false, message: 'Login exists' };
+    }
+
     this.users.set(user.id, user);
+    this.logins.add(user.login);
+    return { success: true };
   }
 
   update(id, userData) {
-    const user = this.users.get(id);
-    if (user) {
-      this.users.set(id, { ...user, ...userData });
-      return true;
+    if (this.users.has(id)) {
+      if (this.logins.has(userData.login)) {
+        return { success: false, message: 'Login exists' };
+      }
+      this.users.set(id, { ...this.users.get(id), ...userData });
+      return { success: true };
     }
-    return false;
+    return { success: false, message: 'User not found' };
   }
 
   delete(id) {
-    const user = this.users.get(id);
-    if (user) {
-      this.users.set(id, { ...user, idDeleted: true });
-      return true;
+    if (this.users.has(id)) {
+      this.users.set(id, { ...this.users.get(id), idDeleted: true });
+      return { success: true };
     }
-    return false;
+    return { success: false, message: 'User not found' };
   }
 
   getById(id) {
     return this.users.get(id);
   }
 
-  getAutoSuggestUsers(substr, limit = DEFAULT_LIMIT) {
+  getAutoSuggestUsers(partOfLogin, limit = DEFAULT_LIMIT) {
     return Array.from(this.users.values())
-      .filter(user => user.login.includes(substr))
+      .filter(user => user.login.includes(partOfLogin))
       .slice(0, limit);
   }
 
