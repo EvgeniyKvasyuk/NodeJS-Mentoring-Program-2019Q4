@@ -39,10 +39,15 @@ class Users {
   }
 
   getById(id) {
-    return this.users.get(id);
+    if (this.users.has(id)) {
+      return { success: true, user: this.users.get(id) };
+    }
+
+    return { success: false, message: 'User not found' };
   }
 
   getAutoSuggestUsers(partOfLogin, limit = DEFAULT_LIMIT) {
+    limit = limit < 0 && DEFAULT_LIMIT;
     return Array.from(this.users.values())
       .filter(user => user.login.includes(partOfLogin))
       .slice(0, limit);

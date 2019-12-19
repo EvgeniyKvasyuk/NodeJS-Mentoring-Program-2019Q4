@@ -18,11 +18,11 @@ usersResource
     );
   })
   .get('/:id', (req, res) => {
-    const user = users.getById(req.params.id);
-    if (user) {
-      res.status(200).json(user);
+    const result = users.getById(req.params.id);
+    if (result.success) {
+      res.status(200).json(result.user);
     } else {
-      res.status(404).end();
+      res.status(404).json(result);
     }
   })
   .post('/', paramsValidator, (req, res) => {
