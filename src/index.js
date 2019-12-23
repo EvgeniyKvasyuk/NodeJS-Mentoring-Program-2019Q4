@@ -7,7 +7,6 @@ process.stdin.on('readable', () => {
   process.stdin.emit('end');
 });
 
-
 process.stdin.on('end', () => {
-   process.stdout.write(`Перевернутый результат: ${enter.split('').reverse().join('')}\n`);
+  process.stdout.write(`Перевернутый результат: ${enter.split('').reverse().join('')}\n`);
 });
