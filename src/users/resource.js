@@ -1,12 +1,18 @@
+// controller
 import express from 'express';
-import users from './Users.js';
+
+import { UsersService } from './service';
+import { UsersModel } from './model';
 import { paramsValidator, validationErrorHandler } from './validation';
 import { ERROR_CODES } from './constants';
 
 const errorCodesToStatusCodesMap = {
   [ERROR_CODES.BAD_DATA]: 400,
   [ERROR_CODES.NOT_FOUND]: 404,
+  [ERROR_CODES.SOMETHING_WENT_WRONG]: 500,
 };
+
+const users = new UsersService(UsersModel);
 
 export const usersResource = express.Router();
 
@@ -17,30 +23,32 @@ usersResource
     });
     next();
   })
-  .get('/', (req, res) => {
-    res.status(200).json(req.query.partOfLogin
-      ? users.getAutoSuggestUsers(req.query.partOfLogin, req.query.limit)
-      : users.get()
-    );
-  })
-  .get('/:id', (req, res) => {
-    const result = users.getById(req.params.id);
+  .get('/', async (req, res) => {
+    const result = await users.get(req.body);
     if (result.success) {
-      res.status(errorCodesToStatusCodesMap[result.code]).json(result.user);
+      res.status(200).json(result.users);
     } else {
       res.status(errorCodesToStatusCodesMap[result.code]).json(result);
     }
   })
-  .post('/', paramsValidator, (req, res) => {
-    const result = users.add(req.body);
+  .get('/:id', async (req, res) => {
+    const result = await users.getById(req.params.id);
+    if (result.success) {
+      res.status(200).json(result.user);
+    } else {
+      res.status(errorCodesToStatusCodesMap[result.code]).json(result);
+    }
+  })
+  .post('/', paramsValidator, async (req, res) => {
+    const result = await users.add(req.body);
     if (result.success) {
       res.status(200).end();
     } else {
       res.status(errorCodesToStatusCodesMap[result.code]).json(result);
     }
   })
-  .put('/:id', paramsValidator, (req, res) => {
-    const result = users.update(req.params.id, req.body);
+  .put('/:id', paramsValidator, async (req, res) => {
+    const result = await users.update(req.params.id, req.body);
     if (result.success) {
       res.status(200).end();
     } else {
@@ -48,8 +56,8 @@ usersResource
     }
 
   })
-  .delete('/:id', (req, res) => {
-    const result = users.delete(req.params.id, req.body);
+  .delete('/:id', async (req, res) => {
+    const result = await users.delete(req.params.id, req.body);
     if (result.success) {
       res.status(200);
     } else {
