@@ -67,7 +67,7 @@ export class UsersService {
     try {
       let users;
       if (partOfLogin) {
-        limit = limit < 0 && DEFAULT_LIMIT;
+        limit = limit < 0 ? DEFAULT_LIMIT : limit;
         users = await this.users.findAll({
           where: { login: { [Op.like]: `%${partOfLogin}` }, isDeleted: false },
           limit,

@@ -24,7 +24,7 @@ usersResource
     next();
   })
   .get('/', async (req, res) => {
-    const result = await users.get(req.body);
+    const result = await users.get(req.query);
     if (result.success) {
       res.status(200).json(result.users);
     } else {
