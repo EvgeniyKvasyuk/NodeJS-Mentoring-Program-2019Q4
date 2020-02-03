@@ -28,7 +28,7 @@ export class UsersService {
   }
 
   async update(id, { login, password, age }) {
-    if (this.isExistById(id)) {
+    if (await this.isExistById(id)) {
       try {
         if (await this.isExistByLogin(login)) {
           return { success: false, code: ERROR_CODES.BAD_DATA, message: 'Login exists' };
@@ -56,7 +56,7 @@ export class UsersService {
 
   async getById(id) {
     const user = await this.isExistById(id);
-    if (await this.isExistById(id)) {
+    if (user) {
       return { success: true, user };
     }
 
@@ -66,13 +66,14 @@ export class UsersService {
   async get({ partOfLogin, limit = DEFAULT_LIMIT }) {
     try {
       let users;
+      // autosuggest by login
       if (partOfLogin) {
-        limit = limit < 0 ? DEFAULT_LIMIT : limit;
         users = await this.users.findAll({
           where: { login: { [Op.like]: `%${partOfLogin}` }, isDeleted: false },
-          limit,
+          limit: limit < 0 ? DEFAULT_LIMIT : limit,
         });
       } else {
+        // get all
         users = await this.users.findAll({ where: { isDeleted: false } });
       }
       return { success: true, users };
