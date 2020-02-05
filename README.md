@@ -9,4 +9,4 @@ npm ci
  
 **npm run task 2 stream**  - конвертация csv файла в txt через поток.
 
-**npm run task 3 **  - запуск сервера с api Users. 
+**npm run task 3 **  - запуск сервера с api Service. 
