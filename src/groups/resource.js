@@ -1,7 +1,6 @@
 // controller
 import express from 'express';
 import { UsersModel } from '../users';
-
 import { GroupsModel, UserGroupModel } from './models';
 import { GroupsService } from './service';
 import { errorCodesToStatusCodesMap, DEFAULT_ERROR_STATUS, DEFAULT_ERROR_RES } from '../constants';
