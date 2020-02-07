@@ -1,5 +1,6 @@
 // controller
 import express from 'express';
+
 import { UsersModel } from '../users';
 import { GroupsModel, UserGroupModel } from './models';
 import { GroupsService } from './service';
