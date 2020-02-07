@@ -1,4 +1,5 @@
 import express from 'express';
+
 import { usersResource } from './users';
 import { groupsResource } from './groups';
 
