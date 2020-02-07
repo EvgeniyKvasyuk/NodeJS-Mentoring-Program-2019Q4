@@ -111,7 +111,7 @@ export class GroupsService {
         }
       });
       if (group) {
-        return { success: true, group };
+        return { success: true, data: group };
       }
       return { success: false, code: ERROR_CODES.NOT_FOUND, message: 'Group not found' };
     } catch {
@@ -130,7 +130,7 @@ export class GroupsService {
           through: { attributes: [] }
         }],
       });
-      return { success: true, groups };
+      return { success: true, data: groups };
     } catch (e) {
       return { success: false, code: ERROR_CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
     }

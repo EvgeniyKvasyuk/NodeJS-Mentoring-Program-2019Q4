@@ -21,7 +21,7 @@ groupsResource
     try {
       const result = await groups.get();
       if (result?.success) {
-        res.status(200).json(result.groups);
+        res.status(200).json(result);
       } else {
         res.status(errorCodesToStatusCodesMap[result.code]).json(result);
       }
@@ -33,7 +33,7 @@ groupsResource
     try {
       const result = await groups.getById(req.params.id);
       if (result?.success) {
-        res.status(200).json(result.group);
+        res.status(200).json(result);
       } else {
         res.status(errorCodesToStatusCodesMap[result.code]).json(result);
       }
@@ -45,7 +45,7 @@ groupsResource
     try {
       const result = await groups.add(req.body);
       if (result?.success) {
-        res.status(200).end();
+        res.status(200).json(result);
       } else {
         res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
       }
@@ -58,7 +58,7 @@ groupsResource
       const result = await groups.addUserToGroup(req.body);
 
       if (result?.success) {
-        res.status(200).end();
+        res.status(200).json(result);
       } else {
         res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
       }
@@ -71,7 +71,7 @@ groupsResource
       const result = await groups.update(req.params.id, req.body);
 
       if (result?.success) {
-        res.status(200).end();
+        res.status(200).json(result);
       } else {
         res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
       }
@@ -83,7 +83,7 @@ groupsResource
     try {
       const result = await groups.delete(req.params.id, req.body);
       if (result?.success) {
-        res.status(200).end();
+        res.status(200).json(result);
       } else {
         res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
       }

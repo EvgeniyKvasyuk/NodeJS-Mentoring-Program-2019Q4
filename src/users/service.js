@@ -61,7 +61,7 @@ export class UsersService {
     try {
       const user = await this.isExistById(id);
       if (user) {
-        return { success: true, user };
+        return { success: true, data: user };
       }
       return { success: false, code: ERROR_CODES.NOT_FOUND, message: 'User not found' };
     } catch {
@@ -83,7 +83,7 @@ export class UsersService {
         // get all
         users = await this.users.findAll({ where: { isDeleted: false } });
       }
-      return { success: true, users };
+      return { success: true, data: users };
     } catch {
       return { success: false, code: ERROR_CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
     }

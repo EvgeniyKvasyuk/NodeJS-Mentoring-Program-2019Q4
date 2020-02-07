@@ -21,7 +21,7 @@ usersResource
     try {
       const result = await users.get(req.query);
       if (result?.success) {
-        res.status(200).json(result.users);
+        res.status(200).json(result);
       } else {
         res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
       }
@@ -33,7 +33,7 @@ usersResource
     try {
       const result = await users.getById(req.params.id);
       if (result?.success) {
-        res.status(200).json(result.user);
+        res.status(200).json(result);
       } else {
         res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
       }
@@ -45,7 +45,7 @@ usersResource
     try {
       const result = await users.add(req.body);
       if (result?.success) {
-        res.status(200).end();
+        res.status(200).json(result);
       } else {
         res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
       }
@@ -58,7 +58,7 @@ usersResource
     try {
       const result = await users.update(req.params.id, req.body);
       if (result?.success) {
-        res.status(200).end();
+        res.status(200).json(result);
       } else {
         res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
       }
@@ -70,7 +70,7 @@ usersResource
     try {
       const result = await users.delete(req.params.id, req.body);
       if (result?.success) {
-        res.status(200).end();
+        res.status(200).json(result);
       } else {
         res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
       }
