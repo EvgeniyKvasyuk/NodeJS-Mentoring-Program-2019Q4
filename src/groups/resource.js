@@ -1,16 +1,16 @@
 // controller
 import express from 'express';
+import { UsersModel } from '../users';
 
-import { UsersService } from './service';
-import { UsersModel } from './model';
-import { paramsValidator, validationErrorHandler } from './validation';
-import { DEFAULT_ERROR_STATUS, errorCodesToStatusCodesMap, DEFAULT_ERROR_RES } from '../constants';
+import { GroupsModel, UserGroupModel } from './models';
+import { GroupsService } from './service';
+import { errorCodesToStatusCodesMap, DEFAULT_ERROR_STATUS, DEFAULT_ERROR_RES } from '../constants';
 
-const users = new UsersService(UsersModel);
+const groups = new GroupsService(GroupsModel, UsersModel, UserGroupModel);
 
-export const usersResource = express.Router();
+export const groupsResource = express.Router();
 
-usersResource
+groupsResource
   .use((req, res, next) => {
     res.set({
       'Content-Type': 'application/json;charset=UTF-8',
@@ -19,11 +19,11 @@ usersResource
   })
   .get('/', async (req, res) => {
     try {
-      const result = await users.get(req.query);
+      const result = await groups.get();
       if (result?.success) {
-        res.status(200).json(result.users);
+        res.status(200).json(result.groups);
       } else {
-        res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
+        res.status(errorCodesToStatusCodesMap[result.code]).json(result);
       }
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RES);
@@ -31,19 +31,19 @@ usersResource
   })
   .get('/:id', async (req, res) => {
     try {
-      const result = await users.getById(req.params.id);
+      const result = await groups.getById(req.params.id);
       if (result?.success) {
-        res.status(200).json(result.user);
+        res.status(200).json(result.group);
       } else {
-        res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
+        res.status(errorCodesToStatusCodesMap[result.code]).json(result);
       }
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RES);
     }
   })
-  .post('/', paramsValidator, async (req, res) => {
+  .post('/', async (req, res) => {
     try {
-      const result = await users.add(req.body);
+      const result = await groups.add(req.body);
       if (result?.success) {
         res.status(200).end();
       } else {
@@ -52,11 +52,24 @@ usersResource
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RES);
     }
-
   })
-  .put('/:id', paramsValidator, async (req, res) => {
+  .post('/addUserToGroup', async (req, res) => {
     try {
-      const result = await users.update(req.params.id, req.body);
+      const result = await groups.addUserToGroup(req.body);
+
+      if (result?.success) {
+        res.status(200).end();
+      } else {
+        res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
+      }
+    } catch {
+      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RES);
+    }
+  })
+  .put('/:id', async (req, res) => {
+    try {
+      const result = await groups.update(req.params.id, req.body);
+
       if (result?.success) {
         res.status(200).end();
       } else {
@@ -68,7 +81,7 @@ usersResource
   })
   .delete('/:id', async (req, res) => {
     try {
-      const result = await users.delete(req.params.id, req.body);
+      const result = await groups.delete(req.params.id, req.body);
       if (result?.success) {
         res.status(200).end();
       } else {
@@ -77,6 +90,5 @@ usersResource
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RES);
     }
-  })
-  .use(validationErrorHandler);
 
+  });

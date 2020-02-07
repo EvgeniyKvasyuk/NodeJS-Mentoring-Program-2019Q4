@@ -3,13 +3,19 @@ import Sequelize from 'sequelize';
 import { sequelize } from '../connect';
 
 export const UsersModel = sequelize.define('users', {
-  // attributes
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+    defaultValue: Sequelize.SERIAL,
+  },
   login: {
-    type: Sequelize.STRING,
+    type: Sequelize.TEXT,
     allowNull: false,
   },
   password: {
-    type: Sequelize.STRING,
+    type: Sequelize.TEXT,
     allowNull: false,
   },
   age: {
