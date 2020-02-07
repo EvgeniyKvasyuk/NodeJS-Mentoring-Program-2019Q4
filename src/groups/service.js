@@ -1,5 +1,5 @@
 import { sequelize } from '../connect';
-import { ERROR_CODES } from '../constants';
+import { CODES } from '../constants';
 
 export class GroupsService {
   constructor(groupsModel, usersModel, userGroupModel) {
@@ -20,6 +20,10 @@ export class GroupsService {
       otherKey: 'groupId',
       as: 'groups',
     });
+
+    this.users.sync();
+    this.userGroup.sync();
+    this.groups.sync();
   }
 
   async isExistByParams({ params, model = this.groups }) {
@@ -33,12 +37,12 @@ export class GroupsService {
   async add({ name, permissions }) {
     try {
       if (await this.isExistByParams({ params: { name } })) {
-        return { success: false, code: ERROR_CODES.BAD_DATA, message: 'Name exists' };
+        return { success: false, code: CODES.BAD_DATA, message: 'Name exists' };
       }
       await this.groups.create({ name, permissions });
-      return { success: true };
+      return { success: true, code: CODES.SUCCESS };
     } catch (e) {
-      return { success: false, code: ERROR_CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
     }
   }
 
@@ -46,11 +50,11 @@ export class GroupsService {
     try {
       if (await this.isExistById({ id, model: this.groups })) {
         await this.groups.update({ name, permissions }, { where: { id } });
-        return { success: true };
+        return { success: true, code: CODES.SUCCESS };
       }
-      return { success: false, code: ERROR_CODES.NOT_FOUND, message: 'Group not found' };
+      return { success: false, code: CODES.NOT_FOUND, message: 'Group not found' };
     } catch {
-      return { success: false, code: ERROR_CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
     }
   }
 
@@ -62,14 +66,14 @@ export class GroupsService {
         await this.groups.destroy({ where: { id }, transaction });
         await this.userGroup.destroy({ where: { groupId: id }, transaction });
         await transaction.commit();
-        return { success: true };
+        return { success: true, code: CODES.SUCCESS };
       }
-      return { success: false, code: ERROR_CODES.NOT_FOUND, message: 'Groups not found' };
+      return { success: false, code: CODES.NOT_FOUND, message: 'Groups not found' };
     } catch {
       if (transaction) {
         await transaction.rollback();
       }
-      return { success: false, code: ERROR_CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
     }
   }
 
@@ -80,20 +84,20 @@ export class GroupsService {
       switch (true) {
         case (!!user && !!group): {
           if (await this.isExistByParams({ params: { userId, groupId }, model: this.userGroup })) {
-            return { success: false, code: ERROR_CODES.BAD_DATA, message: 'User is in group yet' };
+            return { success: false, code: CODES.BAD_DATA, message: 'User is in group already' };
           }
           await this.userGroup.create({ userId, groupId });
-          return { success: true };
+          return { success: true, code: CODES.SUCCESS };
         }
         case (!!user && !group):
-          return { success: false, code: ERROR_CODES.NOT_FOUND, message: 'Group not found' };
+          return { success: false, code: CODES.NOT_FOUND, message: 'Group not found' };
         case (!!group && !user):
-          return { success: false, code: ERROR_CODES.NOT_FOUND, message: 'User not found' };
+          return { success: false, code: CODES.NOT_FOUND, message: 'User not found' };
         default:
-          return { success: false, code: ERROR_CODES.NOT_FOUND, message: 'User and Group not found' };
+          return { success: false, code: CODES.NOT_FOUND, message: 'User and Group not found' };
       }
     } catch {
-      return { success: false, code: ERROR_CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
     }
   }
 
@@ -111,11 +115,11 @@ export class GroupsService {
         }
       });
       if (group) {
-        return { success: true, data: group };
+        return { success: true, code: CODES.SUCCESS, data: group };
       }
-      return { success: false, code: ERROR_CODES.NOT_FOUND, message: 'Group not found' };
+      return { success: false, code: CODES.NOT_FOUND, message: 'Group not found' };
     } catch {
-      return { success: false, code: ERROR_CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
     }
   }
 
@@ -130,9 +134,9 @@ export class GroupsService {
           through: { attributes: [] }
         }],
       });
-      return { success: true, data: groups };
+      return { success: true, code: CODES.SUCCESS, data: groups };
     } catch (e) {
-      return { success: false, code: ERROR_CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
     }
   }
 }

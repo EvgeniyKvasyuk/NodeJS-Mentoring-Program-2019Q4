@@ -4,7 +4,7 @@ import express from 'express';
 import { UsersService } from './service';
 import { UsersModel } from './model';
 import { paramsValidator, validationErrorHandler } from './validation';
-import { DEFAULT_ERROR_STATUS, errorCodesToStatusCodesMap, DEFAULT_ERROR_RES } from '../constants';
+import { DEFAULT_ERROR_STATUS, codesToStatusCodesMap, DEFAULT_ERROR_RES } from '../constants';
 
 const users = new UsersService(UsersModel);
 
@@ -20,11 +20,7 @@ usersResource
   .get('/', async (req, res) => {
     try {
       const result = await users.get(req.query);
-      if (result?.success) {
-        res.status(200).json(result);
-      } else {
-        res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
-      }
+      res.status(codesToStatusCodesMap[result?.code]).json(result);
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RES);
     }
@@ -32,11 +28,7 @@ usersResource
   .get('/:id', async (req, res) => {
     try {
       const result = await users.getById(req.params.id);
-      if (result?.success) {
-        res.status(200).json(result);
-      } else {
-        res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
-      }
+      res.status(codesToStatusCodesMap[result?.code]).json(result);
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RES);
     }
@@ -44,11 +36,7 @@ usersResource
   .post('/', paramsValidator, async (req, res) => {
     try {
       const result = await users.add(req.body);
-      if (result?.success) {
-        res.status(200).json(result);
-      } else {
-        res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
-      }
+      res.status(codesToStatusCodesMap[result?.code]).json(result);
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RES);
     }
@@ -57,11 +45,7 @@ usersResource
   .put('/:id', paramsValidator, async (req, res) => {
     try {
       const result = await users.update(req.params.id, req.body);
-      if (result?.success) {
-        res.status(200).json(result);
-      } else {
-        res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
-      }
+      res.status(codesToStatusCodesMap[result?.code]).json(result);
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RES);
     }
@@ -69,11 +53,7 @@ usersResource
   .delete('/:id', async (req, res) => {
     try {
       const result = await users.delete(req.params.id, req.body);
-      if (result?.success) {
-        res.status(200).json(result);
-      } else {
-        res.status(errorCodesToStatusCodesMap[result?.code]).json(result);
-      }
+      res.status(codesToStatusCodesMap[result?.code]).json(result);
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RES);
     }
