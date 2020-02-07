@@ -14,5 +14,5 @@ export const codesToStatusCodesMap = {
 };
 
 export const DEFAULT_ERROR_STATUS = codesToStatusCodesMap[CODES.DEFAULT];
-export const SUCCESS_STATUS = codesToStatusCodesMap[CODES.SUCCESS];
-export const DEFAULT_ERROR_RES = { success: false, code: CODES.DEFAULT, message: 'Something went wrong' };
+export const DEFAULT_ERROR_RESULT = { success: false, code: CODES.DEFAULT, message: 'Something went wrong' };
+export const DEFAULT_SUCCESS_RESULT = { success: true, code: CODES.SUCCESS };
