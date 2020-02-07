@@ -1,7 +1,6 @@
 import Sequelize from 'sequelize';
 
 import { sequelize } from '../../connect';
-
 import { PERMISSIONS } from '../constants';
 
 export const GroupsModel = sequelize.define('groups', {
