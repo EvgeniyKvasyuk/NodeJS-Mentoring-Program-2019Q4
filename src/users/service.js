@@ -9,21 +9,24 @@ export class UsersService {
     this.users.sync();
   }
 
-  async isExistByLogin(login) {
+  async existsByLogin(login) {
     return this.users.findOne({ where: { login } });
   }
 
-  async isExistById(id) {
+  async existsById(id) {
     return this.users.findByPk(id);
   }
 
   async add({ login, password, age }) {
     try {
-      if (await this.isExistByLogin(login)) {
+      if (await this.existsByLogin(login)) {
         return { success: false, code: CODES.BAD_DATA, message: 'Login exists' };
       }
-      await this.users.create({ login, password, age });
-      return DEFAULT_SUCCESS_RESULT;
+      const createdUser = await this.users.create({ login, password, age });
+      return {
+        ...DEFAULT_SUCCESS_RESULT,
+        data: { id: createdUser.id, login: createdUser.login, age: createdUser.age }
+      };
     } catch (e) {
       return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
     }
@@ -31,8 +34,8 @@ export class UsersService {
 
   async update(id, { login, password, age }) {
     try {
-      if (await this.isExistById(id)) {
-        if (await this.isExistByLogin(login)) {
+      if (await this.existsById(id)) {
+        if (await this.existsByLogin(login)) {
           return { success: false, code: CODES.BAD_DATA, message: 'Login exists' };
         }
         await this.users.update({ login, password, age }, { where: { id } });
@@ -46,7 +49,7 @@ export class UsersService {
 
   async delete(id) {
     try {
-      if (await this.isExistById(id)) {
+      if (await this.existsById(id)) {
         await this.users.update({ isDeleted: true }, { where: { id } });
         return DEFAULT_SUCCESS_RESULT;
       }
@@ -58,7 +61,7 @@ export class UsersService {
 
   async getById(id) {
     try {
-      const user = await this.isExistById(id);
+      const user = await this.existsById(id);
       if (user) {
         return { ...DEFAULT_SUCCESS_RESULT, data: user };
       }

@@ -4,11 +4,13 @@ import express from 'express';
 import { UsersModel } from '../users';
 import { GroupsModel, UserGroupModel } from './models';
 import { GroupsService } from './service';
-import { codesToStatusCodesMap, DEFAULT_ERROR_STATUS, DEFAULT_ERROR_RESULT } from '../constants';
+import { codesToStatusCodesMap, DEFAULT_ERROR_STATUS, DEFAULT_ERROR_RESULT, CODES } from '../constants';
 
 const groups = new GroupsService(GroupsModel, UsersModel, UserGroupModel);
 
 export const groupsResource = express.Router();
+
+const { SUCCESS } = CODES;
 
 groupsResource
   .use((req, res, next) => {
@@ -20,7 +22,7 @@ groupsResource
   .get('/', async (req, res) => {
     try {
       const result = await groups.get();
-      res.status(codesToStatusCodesMap[result?.code]).json(result);
+      res.status(codesToStatusCodesMap[result?.code || SUCCESS]).json(result);
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
     }
@@ -28,7 +30,7 @@ groupsResource
   .get('/:id', async (req, res) => {
     try {
       const result = await groups.getById(req.params.id);
-      res.status(codesToStatusCodesMap[result?.code]).json(result);
+      res.status(codesToStatusCodesMap[result?.code || SUCCESS]).json(result);
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
     }
@@ -36,7 +38,7 @@ groupsResource
   .post('/', async (req, res) => {
     try {
       const result = await groups.add(req.body);
-      res.status(codesToStatusCodesMap[result?.code]).json(result);
+      res.status(codesToStatusCodesMap[result?.code || SUCCESS]).json(result);
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
     }
@@ -44,7 +46,7 @@ groupsResource
   .post('/addUserToGroup', async (req, res) => {
     try {
       const result = await groups.addUserToGroup(req.body);
-      res.status(codesToStatusCodesMap[result?.code]).json(result);
+      res.status(codesToStatusCodesMap[result?.code || SUCCESS]).json(result);
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
     }
@@ -52,7 +54,7 @@ groupsResource
   .put('/:id', async (req, res) => {
     try {
       const result = await groups.update(req.params.id, req.body);
-      res.status(codesToStatusCodesMap[result?.code]).json(result);
+      res.status(codesToStatusCodesMap[result?.code || SUCCESS]).json(result);
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
     }
@@ -60,7 +62,7 @@ groupsResource
   .delete('/:id', async (req, res) => {
     try {
       const result = await groups.delete(req.params.id, req.body);
-      res.status(codesToStatusCodesMap[result?.code]).json(result);
+      res.status(codesToStatusCodesMap[result?.code || SUCCESS]).json(result);
     } catch {
       res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
     }

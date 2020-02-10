@@ -26,21 +26,21 @@ export class GroupsService {
     this.groups.sync();
   }
 
-  async isExistByParams({ params, model = this.groups }) {
+  async existsByParams({ params, model = this.groups }) {
     return model.findOne({ where: params });
   }
 
-  async isExistById({ id, params, model = this.groups }) {
+  async existsById({ id, params, model = this.groups }) {
     return model.findByPk(id, params);
   }
 
   async add({ name, permissions }) {
     try {
-      if (await this.isExistByParams({ params: { name } })) {
+      if (await this.existsByParams({ params: { name } })) {
         return { success: false, code: CODES.BAD_DATA, message: 'Name exists' };
       }
-      await this.groups.create({ name, permissions });
-      return DEFAULT_SUCCESS_RESULT;
+      const createdGroup = await this.groups.create({ name, permissions });
+      return { DEFAULT_SUCCESS_RESULT, data: createdGroup };
     } catch (e) {
       return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
     }
@@ -48,7 +48,7 @@ export class GroupsService {
 
   async update(id, { name, permissions }) {
     try {
-      if (await this.isExistById({ id, model: this.groups })) {
+      if (await this.existsById({ id, model: this.groups })) {
         await this.groups.update({ name, permissions }, { where: { id } });
         return DEFAULT_SUCCESS_RESULT;
       }
@@ -61,29 +61,31 @@ export class GroupsService {
   async delete(id) {
     let transaction;
     try {
-      if (await this.isExistById({ id })) {
+      if (await this.existsById({ id })) {
         transaction = await sequelize.transaction();
-        await this.groups.destroy({ where: { id }, transaction });
-        await this.userGroup.destroy({ where: { groupId: id }, transaction });
-        await transaction.commit();
-        return DEFAULT_SUCCESS_RESULT;
+        try {
+          await this.groups.destroy({ where: { id }, transaction });
+          await this.userGroup.destroy({ where: { groupId: id }, transaction });
+          await transaction.commit();
+          return DEFAULT_SUCCESS_RESULT;
+        } catch {
+          await transaction.rollback();
+          return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+        }
       }
       return { success: false, code: CODES.NOT_FOUND, message: 'Groups not found' };
     } catch {
-      if (transaction) {
-        await transaction.rollback();
-      }
       return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
     }
   }
 
   async addUserToGroup({ userId, groupId }) {
     try {
-      const user = await this.isExistById({ id: userId, model: this.users });
-      const group = await this.isExistById({ id: groupId, model: this.groups });
+      const user = await this.existsById({ id: userId, model: this.users });
+      const group = await this.existsById({ id: groupId, model: this.groups });
       switch (true) {
         case (!!user && !!group): {
-          if (await this.isExistByParams({ params: { userId, groupId }, model: this.userGroup })) {
+          if (await this.existsByParams({ params: { userId, groupId }, model: this.userGroup })) {
             return { success: false, code: CODES.BAD_DATA, message: 'User is in group already' };
           }
           await this.userGroup.create({ userId, groupId });
@@ -103,7 +105,7 @@ export class GroupsService {
 
   async getById(id) {
     try {
-      const group = await this.isExistById({
+      const group = await this.existsById({
         id,
         params: {
           include: [{
