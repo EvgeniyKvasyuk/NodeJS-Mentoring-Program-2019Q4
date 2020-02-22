@@ -1,18 +1,29 @@
-export const CODES = {
-  SUCCESS: 'SUCCESS',
+export const BUSINESS_EXCEPTION_CODES = {
   NOT_FOUND: 'NOT_FOUND',
   BAD_DATA: 'BAD_DATA',
-  SOMETHING_WENT_WRONG: 'SOMETHING_WENT_WRONG',
-  DEFAULT: 'SOMETHING_WENT_WRONG',
 };
+
+export const SYSTEM_EXCEPTION_CODES = {
+  SOMETHING_WENT_WRONG: 'SOMETHING_WENT_WRONG',
+};
+
+export const SUCCESS_CODES = {
+  SUCCESS: 'SUCCESS',
+};
+
+export const CODES = {
+  ...BUSINESS_EXCEPTION_CODES,
+  ...SYSTEM_EXCEPTION_CODES,
+  ...SUCCESS_CODES,
+};
+
 export const codesToStatusCodesMap = {
   [CODES.SUCCESS]: 200,
   [CODES.BAD_DATA]: 400,
   [CODES.NOT_FOUND]: 404,
   [CODES.SOMETHING_WENT_WRONG]: 500,
-  [CODES.DEFAULT]: 500,
 };
 
-export const DEFAULT_ERROR_STATUS = codesToStatusCodesMap[CODES.DEFAULT];
-export const DEFAULT_ERROR_RESULT = { success: false, code: CODES.DEFAULT, message: 'Something went wrong' };
+export const DEFAULT_ERROR_STATUS = codesToStatusCodesMap[CODES.SOMETHING_WENT_WRONG];
+export const DEFAULT_SUCCESS_STATUS = codesToStatusCodesMap[CODES.SUCCESS];
 export const DEFAULT_SUCCESS_RESULT = { success: true, code: CODES.SUCCESS };

@@ -1,10 +1,13 @@
 // controller
 import express from 'express';
+import asyncHandler from 'express-async-handler';
+
+import { errorsHandler } from '../errorsHandler';
+import { sendResponse } from '../utils';
 
 import { UsersService } from './service';
 import { UsersModel } from './model';
 import { paramsValidator, validationErrorHandler } from './validation';
-import { DEFAULT_ERROR_STATUS, codesToStatusCodesMap, DEFAULT_ERROR_RESULT } from '../constants';
 
 const users = new UsersService(UsersModel);
 
@@ -17,46 +20,26 @@ usersResource
     });
     next();
   })
-  .get('/', async (req, res) => {
-    try {
-      const result = await users.get(req.query);
-      res.status(codesToStatusCodesMap[result?.code || DEFAULT_ERROR_STATUS]).json(result);
-    } catch {
-      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
-    }
-  })
-  .get('/:id', async (req, res) => {
-    try {
-      const result = await users.getById(req.params.id);
-      res.status(codesToStatusCodesMap[result?.code || DEFAULT_ERROR_STATUS]).json(result);
-    } catch {
-      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
-    }
-  })
-  .post('/', paramsValidator, async (req, res) => {
-    try {
-      const result = await users.add(req.body);
-      res.status(codesToStatusCodesMap[result?.code || DEFAULT_ERROR_STATUS]).json(result);
-    } catch {
-      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
-    }
-
-  })
-  .put('/:id', paramsValidator, async (req, res) => {
-    try {
-      const result = await users.update(req.params.id, req.body);
-      res.status(codesToStatusCodesMap[result?.code || DEFAULT_ERROR_STATUS]).json(result);
-    } catch {
-      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
-    }
-  })
-  .delete('/:id', async (req, res) => {
-    try {
-      const result = await users.delete(req.params.id, req.body);
-      res.status(codesToStatusCodesMap[result?.code || DEFAULT_ERROR_STATUS]).json(result);
-    } catch {
-      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
-    }
-  })
-  .use(validationErrorHandler);
+  .get('/', asyncHandler(async (req, res) => {
+    const result = await users.get(req.query);
+    sendResponse(res, result);
+  }))
+  .get('/:id', asyncHandler(async (req, res) => {
+    const result = await users.getById(req.params.id);
+    sendResponse(res, result);
+  }))
+  .post('/', paramsValidator, asyncHandler(async (req, res) => {
+    const result = await users.add(req.body);
+    sendResponse(res, result);
+  }))
+  .put('/:id', paramsValidator, asyncHandler(async (req, res) => {
+    const result = await users.update(req.params.id, req.body);
+    sendResponse(res, result);
+  }))
+  .delete('/:id', asyncHandler(async (req, res) => {
+    const result = await users.delete(req.params.id, req.body);
+    sendResponse(res, result);
+  }))
+  .use(validationErrorHandler)
+  .use(errorsHandler);
 

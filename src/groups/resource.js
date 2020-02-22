@@ -1,10 +1,13 @@
 // controller
 import express from 'express';
+import asyncHandler from 'express-async-handler';
+
+import { sendResponse } from '../utils';
+import { errorsHandler } from '../errorsHandler';
 
 import { UsersModel } from '../users';
 import { GroupsModel, UserGroupModel } from './models';
 import { GroupsService } from './service';
-import { codesToStatusCodesMap, DEFAULT_ERROR_STATUS, DEFAULT_ERROR_RESULT } from '../constants';
 
 const groups = new GroupsService(GroupsModel, UsersModel, UserGroupModel);
 
@@ -17,51 +20,28 @@ groupsResource
     });
     next();
   })
-  .get('/', async (req, res) => {
-    try {
-      const result = await groups.get();
-      res.status(codesToStatusCodesMap[result?.code || DEFAULT_ERROR_STATUS]).json(result);
-    } catch {
-      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
-    }
-  })
-  .get('/:id', async (req, res) => {
-    try {
-      const result = await groups.getById(req.params.id);
-      res.status(codesToStatusCodesMap[result?.code || DEFAULT_ERROR_STATUS]).json(result);
-    } catch {
-      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
-    }
-  })
-  .post('/', async (req, res) => {
-    try {
-      const result = await groups.add(req.body);
-      res.status(codesToStatusCodesMap[result?.code || DEFAULT_ERROR_STATUS]).json(result);
-    } catch {
-      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
-    }
-  })
-  .post('/addUserToGroup', async (req, res) => {
-    try {
-      const result = await groups.addUserToGroup(req.body);
-      res.status(codesToStatusCodesMap[result?.code || DEFAULT_ERROR_STATUS]).json(result);
-    } catch {
-      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
-    }
-  })
-  .put('/:id', async (req, res) => {
-    try {
-      const result = await groups.update(req.params.id, req.body);
-      res.status(codesToStatusCodesMap[result?.code || DEFAULT_ERROR_STATUS]).json(result);
-    } catch {
-      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
-    }
-  })
-  .delete('/:id', async (req, res) => {
-    try {
-      const result = await groups.delete(req.params.id, req.body);
-      res.status(codesToStatusCodesMap[result?.code || DEFAULT_ERROR_STATUS]).json(result);
-    } catch {
-      res.status(DEFAULT_ERROR_STATUS).json(DEFAULT_ERROR_RESULT);
-    }
-  });
+  .get('/', asyncHandler(async (req, res) => {
+    const result = await groups.get();
+    sendResponse(res, result);
+  }))
+  .get('/:id', asyncHandler(async (req, res) => {
+    const result = await groups.getById(req.params.id);
+    sendResponse(res, result);
+  }))
+  .post('/', asyncHandler(async (req, res) => {
+    const result = await groups.add(req.body);
+    sendResponse(res, result);
+  }))
+  .post('/addUserToGroup', asyncHandler(async (req, res) => {
+    const result = await groups.addUserToGroup(req.body);
+    sendResponse(res, result);
+  }))
+  .put('/:id', asyncHandler(async (req, res) => {
+    const result = await groups.update(req.params.id, req.body);
+    sendResponse(res, result);
+  }))
+  .delete('/:id', asyncHandler(async (req, res) => {
+    const result = await groups.delete(req.params.id, req.body);
+    sendResponse(res, result);
+  }))
+  .use(errorsHandler);
