@@ -6,28 +6,26 @@ const systemErrorLogger = createLogger({
   level: 'error',
   format: format.combine(format.timestamp(), format.json()),
   transports: [
-    new transports.File({ filename: './logs/systemErrors.log', level: 'error' }),
+    new transports.File({ filename: './logs/systemErrors.log' }),
   ]
 });
 
 const businessExceptionsLogger = createLogger({
-  level: 'info',
+  level: 'error',
   format: format.combine(format.timestamp(), format.json()),
   transports: [
-    new transports.File({ filename: './logs/businessExceptions.log', level: 'info' }),
+    new transports.File({ filename: './logs/businessExceptions.log' }),
   ]
 });
 
 export const log = (error) => {
   let logger = systemErrorLogger;
   let logData = { message: error.message, stack: error.stack };
-  let level = 'error';
   if (error.code) {
     logData = { message: error.message, method: error.method, service: error.service };
     if (BUSINESS_EXCEPTION_CODES[error.code]) {
       logger = businessExceptionsLogger;
-      level = 'info';
     }
   }
-  logger.log(level, logData);
+  logger.error(logData);
 };
