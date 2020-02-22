@@ -21,7 +21,7 @@ export const validationErrorHandler = (err, req, res, next) => {
       acc[current.path[0]] = current.message;
       return acc;
     }, {});
-    log({ message, code: CODES.BAD_DATA });
+    log({ message: JSON.stringify(message), code: CODES.BAD_DATA });
     res
       .status(400)
       .json(message);
