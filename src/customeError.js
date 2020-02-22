@@ -1,7 +1,7 @@
 import { CODES } from './constants';
 
 export class CustomError {
-  constructor({ code = CODES.SOMETHING_WENT_WRONG, message = 'Something went wrong', systemMessage, service, method }) {
+  constructor({ code = CODES.SOMETHING_WENT_WRONG, message = 'Something went wrong', service, method }) {
     this.succes = false;
     this.message = message;
     this.code = code;
@@ -11,9 +11,6 @@ export class CustomError {
     }
     if (service) {
       this.service = service;
-    }
-    if (systemMessage) {
-      this.systemMessage = systemMessage;
     }
   }
 }

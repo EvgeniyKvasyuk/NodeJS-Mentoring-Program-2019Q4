@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "task1": "nodemon --exec babel-node src/index.js",
     "task2": "nodemon --exec babel-node src/csvtojson.js",
-    "task3": "nodemon --exec babel-node src/server.js"
+    "task3": "nodemon --exec babel-node src/server.js",
+    "inspect": "nodemon --inspect --exec babel-node src/server.js"
   },
   "repository": {
     "type": "git",
