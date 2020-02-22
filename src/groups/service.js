@@ -21,10 +21,6 @@ export class GroupsService {
       otherKey: 'groupId',
       as: 'groups',
     });
-
-    this.users.sync();
-    this.userGroup.sync();
-    this.groups.sync();
   }
 
   async existsByParams({ params, model = this.groups }) {

@@ -8,7 +8,6 @@ import { DEFAULT_LIMIT } from './constants';
 export class UsersService {
   constructor(usersModel) {
     this.users = usersModel;
-    this.users.sync();
   }
 
   async existsByLogin(login) {

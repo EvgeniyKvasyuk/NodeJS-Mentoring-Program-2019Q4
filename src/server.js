@@ -14,3 +14,4 @@ server.use('/groups', groupsResource);
 server.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`); // eslint-disable-line no-console
 });
+
