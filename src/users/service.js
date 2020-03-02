@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 
-import { CustomError } from '../customeError';
+import { CustomError } from '../customError';
 import { CODES, DEFAULT_SUCCESS_RESULT } from '../constants';
 
 import { DEFAULT_LIMIT } from './constants';
@@ -30,6 +30,7 @@ export class UsersService {
       };
     } catch (error) {
       if (error.code) {
+        console.log('тут');
         throw error;
       }
       throw new CustomError({ message: error.message, service: 'users', method: 'add' });

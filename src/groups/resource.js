@@ -22,26 +22,26 @@ groupsResource
   })
   .get('/', asyncHandler(async (req, res) => {
     const result = await groups.get();
-    sendResponse(res, result);
+    sendResponse(res, result, 'groups', 'get');
   }))
   .get('/:id', asyncHandler(async (req, res) => {
     const result = await groups.getById(req.params.id);
-    sendResponse(res, result);
+    sendResponse(res, result, 'groups', 'getById');
   }))
   .post('/', asyncHandler(async (req, res) => {
     const result = await groups.add(req.body);
-    sendResponse(res, result);
+    sendResponse(res, result, 'groups', 'add');
   }))
   .post('/addUserToGroup', asyncHandler(async (req, res) => {
     const result = await groups.addUserToGroup(req.body);
-    sendResponse(res, result);
+    sendResponse(res, result, 'groups', 'addUserToGroup');
   }))
   .put('/:id', asyncHandler(async (req, res) => {
     const result = await groups.update(req.params.id, req.body);
-    sendResponse(res, result);
+    sendResponse(res, result, 'groups', 'update');
   }))
   .delete('/:id', asyncHandler(async (req, res) => {
     const result = await groups.delete(req.params.id, req.body);
-    sendResponse(res, result);
+    sendResponse(res, result, 'groups', 'delete');
   }))
   .use(errorsHandler);

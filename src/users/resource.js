@@ -22,23 +22,23 @@ usersResource
   })
   .get('/', asyncHandler(async (req, res) => {
     const result = await users.get(req.query);
-    sendResponse(res, result);
+    sendResponse(res, result, 'users', 'get');
   }))
   .get('/:id', asyncHandler(async (req, res) => {
     const result = await users.getById(req.params.id);
-    sendResponse(res, result);
+    sendResponse(res, result, 'users', 'getById');
   }))
-  .post('/', paramsValidator, asyncHandler(async (req, res) => {
+  .post('/', paramsValidator, async (req, res) => {
     const result = await users.add(req.body);
-    sendResponse(res, result);
-  }))
+    sendResponse(res, result, 'users', 'add');
+  })
   .put('/:id', paramsValidator, asyncHandler(async (req, res) => {
     const result = await users.update(req.params.id, req.body);
-    sendResponse(res, result);
+    sendResponse(res, result, 'users', 'update');
   }))
   .delete('/:id', asyncHandler(async (req, res) => {
     const result = await users.delete(req.params.id, req.body);
-    sendResponse(res, result);
+    sendResponse(res, result, 'users', 'delete');
   }))
   .use(validationErrorHandler)
   .use(errorsHandler);

@@ -1,6 +1,6 @@
 import { sequelize } from '../connect';
 import { CODES, DEFAULT_SUCCESS_RESULT } from '../constants';
-import { CustomError } from '../customeError';
+import { CustomError } from '../customError';
 
 export class GroupsService {
   constructor(groupsModel, usersModel, userGroupModel) {

@@ -3,7 +3,7 @@ import { log } from './logger';
 
 const DEFAULT_MESSAGE = 'Something went wrong';
 
-export const errorsHandler = (error, request, res) => {
+export const errorsHandler = (error, request, res, next) => {
   log(error);
   res
     .status(codesToStatusCodesMap[error.code || DEFAULT_ERROR_STATUS])

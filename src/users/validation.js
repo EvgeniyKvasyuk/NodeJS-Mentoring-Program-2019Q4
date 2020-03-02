@@ -16,6 +16,7 @@ const validationSchema = Joi.object({
 export const paramsValidator = validator.body(validationSchema);
 
 export const validationErrorHandler = (err, req, res, next) => {
+  console.log('sdsdsdsd');
   if (err?.error?.isJoi) {
     const message = err?.error?.details?.reduce((acc, current) => {
       acc[current.path[0]] = current.message;
@@ -26,6 +27,7 @@ export const validationErrorHandler = (err, req, res, next) => {
       .status(400)
       .json(message);
   } else {
+    console.log('ушел в следующий мидлвар');
     next(err);
   }
 };

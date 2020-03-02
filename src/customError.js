@@ -5,12 +5,7 @@ export class CustomError {
     this.succes = false;
     this.message = message;
     this.code = code;
-
-    if (method) {
-      this.method = method;
-    }
-    if (service) {
-      this.service = service;
-    }
+    this.method = method;
+    this.service = service;
   }
 }
