@@ -7,6 +7,6 @@ export const sequelize = new Sequelize('node_js_mp_2019_q4', 'postgres', 'postgr
   dialect: 'postgres',
 });
 
-sequelize.sync()
+sequelize.authenticate()
   .then(() => { console.log('DB successfully connected'); })
   .catch((error) => { log(error); });
