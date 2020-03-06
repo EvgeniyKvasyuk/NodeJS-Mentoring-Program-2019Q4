@@ -1,6 +1,9 @@
 import Joi from '@hapi/joi';
 import { createValidator } from 'express-joi-validation';
 
+import { log } from '../logger';
+import { CODES } from '../constants';
+
 import { MIN_AGE, MAX_AGE, PASSWORD_PATTERN } from './constants';
 
 const validator = createValidator({ passError: true });
@@ -18,9 +21,11 @@ export const validationErrorHandler = (err, req, res, next) => {
       acc[current.path[0]] = current.message;
       return acc;
     }, {});
+    log({ message: JSON.stringify(message), code: CODES.BAD_DATA });
     res
       .status(400)
       .json(message);
+  } else {
+    next(err);
   }
-  next(err);
 };

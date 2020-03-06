@@ -1,5 +1,6 @@
 import { sequelize } from '../connect';
 import { CODES, DEFAULT_SUCCESS_RESULT } from '../constants';
+import { CustomError } from '../customError';
 
 export class GroupsService {
   constructor(groupsModel, usersModel, userGroupModel) {
@@ -20,10 +21,6 @@ export class GroupsService {
       otherKey: 'groupId',
       as: 'groups',
     });
-
-    this.users.sync();
-    this.userGroup.sync();
-    this.groups.sync();
   }
 
   async existsByParams({ params, model = this.groups }) {
@@ -37,12 +34,15 @@ export class GroupsService {
   async add({ name, permissions }) {
     try {
       if (await this.existsByParams({ params: { name } })) {
-        return { success: false, code: CODES.BAD_DATA, message: 'Name exists' };
+        throw new CustomError({ code: CODES.BAD_DATA, message: 'Name exists', service: 'groups', method: 'add' });
       }
       const createdGroup = await this.groups.create({ name, permissions });
       return { DEFAULT_SUCCESS_RESULT, data: createdGroup };
-    } catch (e) {
-      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+    } catch (error) {
+      if (error.code) {
+        throw error;
+      }
+      throw new CustomError({ message: error.message, service: 'groups', method: 'add' });
     }
   }
 
@@ -52,9 +52,12 @@ export class GroupsService {
         await this.groups.update({ name, permissions }, { where: { id } });
         return DEFAULT_SUCCESS_RESULT;
       }
-      return { success: false, code: CODES.NOT_FOUND, message: 'Group not found' };
-    } catch {
-      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+      throw new CustomError({ code: CODES.NOT_FOUND, message: 'Group not found', service: 'groups', method: 'update' });
+    } catch (error) {
+      if (error.code) {
+        throw error;
+      }
+      throw new CustomError({ message: error.message, service: 'groups', method: 'update' });
     }
   }
 
@@ -68,14 +71,17 @@ export class GroupsService {
           await this.userGroup.destroy({ where: { groupId: id }, transaction });
           await transaction.commit();
           return DEFAULT_SUCCESS_RESULT;
-        } catch {
+        } catch (error) {
           await transaction.rollback();
-          return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+          throw new CustomError({ message: error.message, service: 'groups', method: 'delete' });
         }
       }
-      return { success: false, code: CODES.NOT_FOUND, message: 'Groups not found' };
-    } catch {
-      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+      throw new CustomError({ code: CODES.NOT_FOUND, message: 'Groups not found', service: 'groups', method: 'delete' });
+    } catch (error) {
+      if (error.code) {
+        throw error;
+      }
+      throw new CustomError({ message: error.message, service: 'groups', method: 'delete' });
     }
   }
 
@@ -86,20 +92,23 @@ export class GroupsService {
       switch (true) {
         case (!!user && !!group): {
           if (await this.existsByParams({ params: { userId, groupId }, model: this.userGroup })) {
-            return { success: false, code: CODES.BAD_DATA, message: 'User is in group already' };
+            throw new CustomError({ code: CODES.BAD_DATA, message: 'User is in group already', service: 'groups', method: 'addUserToGroup' });
           }
           await this.userGroup.create({ userId, groupId });
           return DEFAULT_SUCCESS_RESULT;
         }
         case (!!user && !group):
-          return { success: false, code: CODES.NOT_FOUND, message: 'Group not found' };
+          throw new CustomError({ code: CODES.NOT_FOUND, message: 'Group not found', service: 'groups', method: 'addUserToGroup' });
         case (!!group && !user):
-          return { success: false, code: CODES.NOT_FOUND, message: 'User not found' };
+          throw new CustomError({ code: CODES.NOT_FOUND, message: 'User not found', service: 'groups', method: 'addUserToGroup' });
         default:
-          return { success: false, code: CODES.NOT_FOUND, message: 'User and Group not found' };
+          throw new CustomError({ code: CODES.NOT_FOUND, message: 'User and Group not found', service: 'groups', method: 'addUserToGroup' });
       }
-    } catch {
-      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+    } catch (error) {
+      if (error.code) {
+        throw error;
+      }
+      throw new CustomError({ message: error.message, service: 'groups', method: 'addUserToGroup' });
     }
   }
 
@@ -116,12 +125,17 @@ export class GroupsService {
           }],
         }
       });
+
       if (group) {
         return { ...DEFAULT_SUCCESS_RESULT, data: group };
       }
-      return { success: false, code: CODES.NOT_FOUND, message: 'Group not found' };
-    } catch {
-      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+
+      throw new CustomError({ code: CODES.NOT_FOUND, message: 'Group not found', service: 'groups', method: 'getById' });
+    } catch (error) {
+      if (error.code) {
+        throw error;
+      }
+      throw new CustomError({ message: error.message, service: 'groups', method: 'getById' });
     }
   }
 
@@ -137,8 +151,8 @@ export class GroupsService {
         }],
       });
       return { ...DEFAULT_SUCCESS_RESULT, data: groups };
-    } catch (e) {
-      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+    } catch (error) {
+      throw new CustomError({ message: error.message, service: 'users', method: 'get' });
     }
   }
 }

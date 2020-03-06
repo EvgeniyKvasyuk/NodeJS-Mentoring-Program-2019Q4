@@ -1,12 +1,13 @@
 import { Op } from 'sequelize';
 
-import { DEFAULT_LIMIT } from './constants';
+import { CustomError } from '../customError';
 import { CODES, DEFAULT_SUCCESS_RESULT } from '../constants';
+
+import { DEFAULT_LIMIT } from './constants';
 
 export class UsersService {
   constructor(usersModel) {
     this.users = usersModel;
-    this.users.sync();
   }
 
   async existsByLogin(login) {
@@ -20,15 +21,19 @@ export class UsersService {
   async add({ login, password, age }) {
     try {
       if (await this.existsByLogin(login)) {
-        return { success: false, code: CODES.BAD_DATA, message: 'Login exists' };
+        throw new CustomError({ code: CODES.BAD_DATA, message: 'Login exists', service: 'users', method: 'add' });
       }
       const createdUser = await this.users.create({ login, password, age });
       return {
         ...DEFAULT_SUCCESS_RESULT,
         data: { id: createdUser.id, login: createdUser.login, age: createdUser.age }
       };
-    } catch (e) {
-      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+    } catch (error) {
+      if (error.code) {
+        console.log('тут');
+        throw error;
+      }
+      throw new CustomError({ message: error.message, service: 'users', method: 'add' });
     }
   }
 
@@ -36,14 +41,17 @@ export class UsersService {
     try {
       if (await this.existsById(id)) {
         if (await this.existsByLogin(login)) {
-          return { success: false, code: CODES.BAD_DATA, message: 'Login exists' };
+          throw new CustomError({ code: CODES.BAD_DATA, message: 'Login exists', service: 'users', method: 'update' });
         }
         await this.users.update({ login, password, age }, { where: { id } });
         return DEFAULT_SUCCESS_RESULT;
       }
-      return { success: false, code: CODES.NOT_FOUND, message: 'User not found' };
-    } catch {
-      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+      throw new CustomError({ code: CODES.NOT_FOUND, message: 'User not found', service: 'users', method: 'update' });
+    } catch (error) {
+      if (error.code) {
+        throw error;
+      }
+      throw new CustomError({ message: error.message, service: 'users', method: 'update' });
     }
   }
 
@@ -53,9 +61,12 @@ export class UsersService {
         await this.users.update({ isDeleted: true }, { where: { id } });
         return DEFAULT_SUCCESS_RESULT;
       }
-      return { success: false, code: CODES.NOT_FOUND, message: 'User not found' };
-    } catch {
-      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+      throw new CustomError({ code: CODES.NOT_FOUND, message: 'User not found', service: 'users', method: 'delete' });
+    } catch (error) {
+      if (error.code) {
+        throw error;
+      }
+      throw new CustomError({ message: error.message, service: 'users', method: 'delete' });
     }
   }
 
@@ -65,9 +76,12 @@ export class UsersService {
       if (user) {
         return { ...DEFAULT_SUCCESS_RESULT, data: user };
       }
-      return { success: false, code: CODES.NOT_FOUND, message: 'User not found' };
-    } catch {
-      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+      throw new CustomError({ code: CODES.NOT_FOUND, message: 'User not found', service: 'users', method: 'getById' });
+    } catch (error) {
+      if (error.code) {
+        throw error;
+      }
+      throw new CustomError({ message: error.message, service: 'users', method: 'getById' });
     }
 
   }
@@ -86,8 +100,8 @@ export class UsersService {
         users = await this.users.findAll({ where: { isDeleted: false } });
       }
       return { ...DEFAULT_SUCCESS_RESULT, data: users };
-    } catch {
-      return { success: false, code: CODES.SOMETHING_WENT_WRONG, message: 'Something went wrong' };
+    } catch (error) {
+      throw new CustomError({ message: error.message, service: 'users', method: 'get' });
     }
   }
 }
