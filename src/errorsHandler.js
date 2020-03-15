@@ -6,8 +6,8 @@ const DEFAULT_MESSAGE = 'Something went wrong';
 export const errorsHandler = (error, request, res, next) => {
   log(error);
   res
-    .status(codesToStatusCodesMap[error.code || DEFAULT_ERROR_STATUS])
+    .status(error.code ? codesToStatusCodesMap[error.code] : DEFAULT_ERROR_STATUS)
     .json({
-      success: false, message: error.message || DEFAULT_MESSAGE, code: error.code || CODES.SOMETHING_WENT_WRONG
+      success: false, message: error.message ?? DEFAULT_MESSAGE, code: error.code ?? CODES.SOMETHING_WENT_WRONG
     });
 };

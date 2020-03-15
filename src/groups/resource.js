@@ -3,7 +3,6 @@ import express from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { sendResponse } from '../utils';
-import { errorsHandler } from '../errorsHandler';
 
 import { UsersModel } from '../users';
 import { GroupsModel, UserGroupModel } from './models';
@@ -43,5 +42,4 @@ groupsResource
   .delete('/:id', asyncHandler(async (req, res) => {
     const result = await groups.delete(req.params.id, req.body);
     sendResponse(res, result, 'groups', 'delete');
-  }))
-  .use(errorsHandler);
+  }));
