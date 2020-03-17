@@ -30,7 +30,6 @@ export class UsersService {
       };
     } catch (error) {
       if (error.code) {
-        console.log('тут');
         throw error;
       }
       throw new CustomError({ message: error.message, service: 'users', method: 'add' });

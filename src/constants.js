@@ -7,6 +7,11 @@ export const SYSTEM_EXCEPTION_CODES = {
   SOMETHING_WENT_WRONG: 'SOMETHING_WENT_WRONG',
 };
 
+export const AUTH_CODES = {
+  INCORRECT_TOKEN: 'INCORRECT_TOKEN',
+  UNAUTHORIZED_ERROR: 'UNAUTHORIZED_ERROR',
+};
+
 export const SUCCESS_CODES = {
   SUCCESS: 'SUCCESS',
 };
@@ -15,6 +20,7 @@ export const CODES = {
   ...BUSINESS_EXCEPTION_CODES,
   ...SYSTEM_EXCEPTION_CODES,
   ...SUCCESS_CODES,
+  ...AUTH_CODES,
 };
 
 export const codesToStatusCodesMap = {
@@ -22,8 +28,12 @@ export const codesToStatusCodesMap = {
   [CODES.BAD_DATA]: 400,
   [CODES.NOT_FOUND]: 404,
   [CODES.SOMETHING_WENT_WRONG]: 500,
+  [CODES.UNAUTHORIZED_ERROR]: 401,
+  [CODES.INCORRECT_TOKEN]: 403,
 };
 
 export const DEFAULT_ERROR_STATUS = codesToStatusCodesMap[CODES.SOMETHING_WENT_WRONG];
 export const DEFAULT_SUCCESS_STATUS = codesToStatusCodesMap[CODES.SUCCESS];
 export const DEFAULT_SUCCESS_RESULT = { success: true, code: CODES.SUCCESS };
+
+export const SECRET = process.env.SECRET || 'secret';

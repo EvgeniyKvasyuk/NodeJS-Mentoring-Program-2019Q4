@@ -2,7 +2,6 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 
-import { errorsHandler } from '../errorsHandler';
 import { sendResponse } from '../utils';
 
 import { UsersService } from './service';
@@ -28,10 +27,10 @@ usersResource
     const result = await users.getById(req.params.id);
     sendResponse(res, result, 'users', 'getById');
   }))
-  .post('/', paramsValidator, async (req, res) => {
+  .post('/', paramsValidator, asyncHandler(async (req, res) => {
     const result = await users.add(req.body);
     sendResponse(res, result, 'users', 'add');
-  })
+  }))
   .put('/:id', paramsValidator, asyncHandler(async (req, res) => {
     const result = await users.update(req.params.id, req.body);
     sendResponse(res, result, 'users', 'update');
@@ -40,6 +39,5 @@ usersResource
     const result = await users.delete(req.params.id, req.body);
     sendResponse(res, result, 'users', 'delete');
   }))
-  .use(validationErrorHandler)
-  .use(errorsHandler);
+  .use(validationErrorHandler);
 
