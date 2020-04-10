@@ -1,12 +1,14 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 
 import { errorsHandler } from './errorsHandler';
 import { usersResource } from './users';
 import { groupsResource } from './groups';
 import { authResource, authValidator } from './auth';
 
-const PORT = process.env.PORT || 4000;
+dotenv.config();
+const PORT = process.env.PORT;
 const server = express();
 
 server.use(cors());

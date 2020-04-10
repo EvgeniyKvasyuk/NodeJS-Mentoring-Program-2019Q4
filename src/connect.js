@@ -1,9 +1,13 @@
 import Sequelize from 'sequelize';
+import dotenv from 'dotenv';
+
 import { log } from './logger';
 
-export const sequelize = new Sequelize('node_js_mp_2019_q4', 'postgres', 'postgres', {
+dotenv.config();
+
+export const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
   host: 'localhost',
-  port: 5432,
+  port: process.env.DB_PORT,
   dialect: 'postgres',
 });
 
